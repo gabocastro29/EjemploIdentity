@@ -1,0 +1,79 @@
+﻿@model EjemploIdentity.Models.Pedido
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Pedido</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Cliente.NombreCompleto)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Cliente.NombreCompleto)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FechaRegistro)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FechaRegistro)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FechaEntrega)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FechaEntrega)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EstadoPedido)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EstadoPedido)
+        </dd>
+
+    </dl>
+</div>
+<table id="tablaProductos" class="table">
+    <tr>
+        <th>
+           Descripcion
+        </th>
+        <th>
+            Valor Unitario
+        </th>
+        <th>
+            Cantidad
+        </th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model.ProductosPedido)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Producto.Descripcion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ValorUnitario)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cantidad)
+            </td>
+        </tr>
+    }
+
+</table>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,124 @@
+﻿@model EjemploIdentity.Models.CrearListarTransporteViewModel
+
+@{
+    ViewBag.Title = "Transportes";
+
+    if (!String.IsNullOrEmpty(Model.MensajeExito))
+    {
+            <div id="mensajeExito" class="alert alert-success alert-dismissible" role="alert">
+                <strong>Creado!</strong> <span id="textoalerta">Su transporte fue registrado exitosamente.</span>
+                <button type="button" class="close" data-dismiss="alert" data-target="#mensajeExito" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+    }
+
+}
+
+    <h2>Transportes</h2>
+
+    <p>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#crearTransporte">
+            Nuevo Transporte
+        </button>
+    </p>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => Model.TransporteModelo.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.TransporteModelo.Descripcion)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.ListaTransportes)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Descripcion)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                </td>
+            </tr>
+        }
+
+    </table>
+
+    <div class="modal fade" id="crearTransporte" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Registro de Transporte</h4>
+                    <button type="button" class="close" style="margin-top: -20px;" data-dismiss="modal" data-target="#crearTransporte" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                @using (Html.BeginForm("Create", "Transportes", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="modal-body">
+
+                        <div class="container">
+
+                            <div class="form-horizontal">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.TransporteModelo.Nombre, htmlAttributes: new { @class = "control-label col-md-3" })
+                                    <div class="col-md-9">
+                                        @Html.EditorFor(model => model.TransporteModelo.Nombre, new { htmlAttributes = new { @class = "form-control", @id = "Nombre" } })
+                                        @Html.ValidationMessageFor(model => model.TransporteModelo.Nombre, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.TransporteModelo.Descripcion, htmlAttributes: new { @class = "control-label col-md-3" })
+                                    <div class="col-md-9">
+                                        @Html.EditorFor(model => model.TransporteModelo.Descripcion, new { htmlAttributes = new { @class = "form-control", @id = "Descripcion" } })
+                                        @Html.ValidationMessageFor(model => model.TransporteModelo.Descripcion, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    @section scripts {
+        <script type="text/javascript">
+        $(document).ready(
+            function () {
+                    $('#crearTransporte').on('shown.bs.modal', function () {
+                        $('#Nombre').trigger('focus')
+                    });
+                    var valorMensaje = '@Model.MensajeExito';
+
+                    if ($('#Nombre').val() && !valorMensaje){
+                        $('#crearTransporte').modal('show');
+                    }
+
+                    if (valorMensaje) {
+                        $('#Nombre').val("");
+                        $('#Descripcion').val("");
+                    }
+            }
+        );
+
+        </script>
+    }

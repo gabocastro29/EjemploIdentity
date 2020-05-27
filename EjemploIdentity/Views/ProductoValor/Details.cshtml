@@ -1,0 +1,50 @@
+﻿@model EjemploIdentity.Models.ProductoValor
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>ProductoValor</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Producto.Descripcion)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Producto.Descripcion)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ValorMinimo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ValorMinimo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ValorMaximo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ValorMaximo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FechaRegistro)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FechaRegistro)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,220 @@
+﻿@model EjemploIdentity.Models.OrdenCompraViewModel
+
+@{
+    ViewBag.Title = "Orden de Compra";
+}
+
+<h2>Create</h2>
+
+<div>
+    @Html.ActionLink("Volver", "Index")
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Token)
+
+    <div class="form-horizontal">
+        <h4>Pedido</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Pedido.ClienteId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.Pedido.ClienteId, Model.Clientes, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Pedido.ClienteId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Pedido.FechaEntrega, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Pedido.FechaEntrega, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Pedido.FechaEntrega, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <p>
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#agregaProductoModal">
+                Agregar Producto
+            </button>
+        </p>
+        <table id="tablaProductos" class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.PedidoProductoBase.Producto.Descripcion)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PedidoProductoBase.ValorUnitario)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PedidoProductoBase.Cantidad)
+                </th>
+                <th>
+                    @Html.DisplayName("Total")
+                </th>
+                <th></th>
+            </tr>
+            @foreach (var item in Model.Pedido.ProductosPedido)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Producto.Descripcion)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ValorUnitario)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cantidad)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Eliminar", "EliminarProducto", new { id = item.Producto.ID })
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        @Html.ValidationMessageFor(modelItem => item.ValorUnitario)
+                        @Html.ValidationMessageFor(modelItem => item.Cantidad)
+                    </td>
+                </tr>
+              }
+
+            </table>
+
+        <div class="form-group">
+            <div class="col-md-10">
+                <input type="submit" value="Crear Pedido" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+
+<div class="modal fade" id="agregaProductoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLabel">Agregar Producto</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @using (Html.BeginForm())
+            {
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-horizontal">
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.PedidoProductoBase.ProductoId, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-9">
+                                @Html.DropDownListFor(model => model.PedidoProductoBase.ProductoId, Model.Productos, htmlAttributes: new { @class = "form-control", @id="SelectProducto" })
+                                @Html.ValidationMessageFor(model => model.PedidoProductoBase.ProductoId, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.PedidoProductoBase.ValorUnitario, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.PedidoProductoBase.ValorUnitario, new { htmlAttributes = new { @class = "form-control", @id = "ValorUnitarioProducto" } })
+                                @Html.ValidationMessageFor(model => model.PedidoProductoBase.ValorUnitario, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.PedidoProductoBase.Cantidad, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.PedidoProductoBase.Cantidad, new { htmlAttributes = new { @class = "form-control", @id = "CantidadProducto" } })
+                                @Html.ValidationMessageFor(model => model.PedidoProductoBase.Cantidad, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+                    <button type="button" id="agregar" class="btn btn-primary">Agregar</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(
+            function () {
+                $("#agregar").click(
+                    function () {
+                        actualizarTablaProductos();
+                    }
+                );
+            }
+        );
+
+        function actualizarTablaProductos() {
+            var producto = $("#SelectProducto option:selected").text();
+            var productoid = $("#SelectProducto option:selected").val();
+            var valor = $("#ValorUnitarioProducto").val();
+            var cantidad = $("#CantidadProducto").val();
+            var markup = '<tr><td id="nombreproducto">' + producto + '</td> <td>' + valor + '</td> <td>' + cantidad + '</td> <td>' + '$' + cantidad* valor + '</td> <td><button type="button" class="btn btn-link" id="BotonEliminar" onclick="eliminarProducto(' + productoid + ',\'' + producto + '\',this)" >Eliminar</button> </td></tr>';
+            $("#tablaProductos tbody").append(markup);
+            $("#SelectProducto option:selected").remove();
+            enviarSolicitudProducto(productoid, producto, valor, cantidad, 1);
+            cerrarModal();
+        }
+
+        function cerrarModal() {
+            $("#SelectProducto").val([]);
+            $("#ValorUnitarioProducto").val("");
+            $("#CantidadProducto").val("");
+            $("#agregaProductoModal").modal("hide");
+        }
+
+        function eliminarProducto(productoid, producto, object) {
+            $('#SelectProducto').append('<option value="' + productoid + '"> ' + producto + '  </option>');
+            $(object).closest("tr").remove();
+            enviarSolicitudProducto(productoid, producto, 0, 0, 2);
+        }
+
+        function enviarSolicitudProducto(idProducto, nombreProducto, valorProducto, cantidadProducto, accion) {
+            var urlEnviar;
+            if (accion == 1) {
+                urlEnviar = '@Url.Action("AgregarProducto", "PedidoCP")';
+            } else {
+                urlEnviar = '@Url.Action("EliminarProducto", "PedidoCP")';
+            }
+            var producto = {
+                id: idProducto,
+                descripcion: nombreProducto,
+                valorUnitario: valorProducto,
+                cantidad: cantidadProducto,
+                token: $("#Token").val()
+            }
+            $.ajax(
+                {
+                    url: urlEnviar,
+                    type: "POST",
+                    data: JSON.stringify(producto),
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    async: true,
+                    success:
+                        function (response) {
+                            console.log(response);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        var error = eval("(" + XMLHttpRequest.responseText + ")");
+                        console.log(error.Message);
+                    }
+                }
+            );
+        }
+
+    </script>
+}
