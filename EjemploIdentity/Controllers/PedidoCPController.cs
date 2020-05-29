@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using EjemploIdentity.Models;
+using PagedList;
 
 namespace EjemploIdentity.Controllers
 {
@@ -12,11 +13,33 @@ namespace EjemploIdentity.Controllers
     {
         private Contexto db = new Contexto();
 
+
+        // Método Index con paginación
         // GET: Pedidos
-        public ActionResult Index()
+        public ViewResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
+            ViewBag.CurrentSort = sortOrder;
+
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+
             var pedidos = db.Pedidos.Include(p => p.Cliente);
-            return View(pedidos.ToList());
+
+            //Para poder usar una paginación debemos ordenar
+            pedidos = pedidos.OrderBy(p => p.ID);
+
+            //El tamaño de la lista estará de 10 en 10
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            return View(pedidos.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: Pedidos/Details/5
