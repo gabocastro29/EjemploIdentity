@@ -18,7 +18,12 @@ namespace EjemploIdentity.Controllers
         // GET: Pedidos
         public ViewResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
+
             ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = string.IsNullOrEmpty(sortOrder) ? "cliente" : "";
+            ViewBag.FechaRSortParm = "fechaRegistro";
+            ViewBag.FechaESortParm = "fechaEntrega";
+            ViewBag.EstadoSortParm = "Estado";
 
             if (searchString != null)
             {
@@ -33,8 +38,25 @@ namespace EjemploIdentity.Controllers
 
             var pedidos = db.Pedidos.Include(p => p.Cliente);
 
-            //Para poder usar una paginación debemos ordenar
-            pedidos = pedidos.OrderBy(p => p.ID);
+            //Casos de ordenamiento segun la columna que se seleccione o por defecto si no se hace
+            switch (sortOrder)
+            {
+                case "cliente":
+                    pedidos = pedidos.OrderBy(s => s.Cliente.NombreCompleto);
+                    break;
+                case "fechaRegistro":
+                    pedidos = pedidos.OrderBy(s => s.FechaRegistro);
+                    break;
+                case "fechaEntrega":
+                    pedidos = pedidos.OrderBy(s => s.FechaEntrega);
+                    break;
+                case "Estado":
+                    pedidos = pedidos.OrderBy(s => s.EstadoPedido);
+                    break;
+                default:
+                    pedidos = pedidos.OrderByDescending(s => s.FechaRegistro);
+                    break;
+            }
 
             //El tamaño de la lista estará de 10 en 10
             int pageSize = 10;

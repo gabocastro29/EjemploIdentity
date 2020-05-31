@@ -15,17 +15,18 @@
 </p>
 <table class="table">
     <tr>
+            
         <th>
-            Nombre Completo
+            @Html.ActionLink("Nombre Completo", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            Fecha Registro
+            @Html.ActionLink("Fecha Registro", "Index", new { sortOrder = ViewBag.FechaRSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            Fecha Entrega
+            @Html.ActionLink("Fecha Entrega", "Index", new { sortOrder = ViewBag.FechaESortParm, currentFilter = ViewBag.CurrentFilter })      
         </th>
         <th>
-            Estado del Pedido
+            @Html.ActionLink("Estado del Pedido", "Index", new { sortOrder = ViewBag.EstadoSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th></th>
     </tr>
