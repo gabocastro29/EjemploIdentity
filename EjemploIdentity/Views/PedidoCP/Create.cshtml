@@ -77,9 +77,9 @@
                         @Html.ValidationMessageFor(modelItem => item.Cantidad)
                     </td>
                 </tr>
-              }
+            }
 
-            </table>
+        </table>
 
         <div class="form-group">
             <div class="col-md-10">
@@ -114,7 +114,7 @@
                         <div class="form-group">
                             @Html.LabelFor(model => model.PedidoProductoBase.ProductoId, htmlAttributes: new { @class = "control-label col-md-2" })
                             <div class="col-md-9">
-                                @Html.DropDownListFor(model => model.PedidoProductoBase.ProductoId, Model.Productos, htmlAttributes: new { @class = "form-control", @id="SelectProducto" })
+                                @Html.DropDownListFor(model => model.PedidoProductoBase.ProductoId, Model.Productos, htmlAttributes: new { @class = "form-control", @id = "SelectProducto" })
                                 @Html.ValidationMessageFor(model => model.PedidoProductoBase.ProductoId, "", new { @class = "text-danger" })
                             </div>
                         </div>
@@ -123,6 +123,7 @@
                             @Html.LabelFor(model => model.PedidoProductoBase.ValorUnitario, htmlAttributes: new { @class = "control-label col-md-2" })
                             <div class="col-md-9">
                                 @Html.EditorFor(model => model.PedidoProductoBase.ValorUnitario, new { htmlAttributes = new { @class = "form-control", @id = "ValorUnitarioProducto" } })
+                                <p><a href="#" id="toolTipMaximo" class="tooltip-test" title="">El valor máximo</a> y <a href="#" id="toolTipMinimo" class="tooltip-test" title="">El valor mínimo</a> have tooltips on hover.</p>
                                 @Html.ValidationMessageFor(model => model.PedidoProductoBase.ValorUnitario, "", new { @class = "text-danger" })
                             </div>
                         </div>
@@ -145,6 +146,12 @@
     </div>
 </div>
 
+<style>
+    .tooltip {
+        z-index: -100000;
+    }
+</style>
+
 @section scripts {
     <script type="text/javascript">
         $(document).ready(
@@ -157,12 +164,16 @@
             }
         );
 
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+
         function actualizarTablaProductos() {
             var producto = $("#SelectProducto option:selected").text();
             var productoid = $("#SelectProducto option:selected").val();
             var valor = $("#ValorUnitarioProducto").val();
             var cantidad = $("#CantidadProducto").val();
-            var markup = '<tr><td id="nombreproducto">' + producto + '</td> <td>' + valor + '</td> <td>' + cantidad + '</td> <td>' + '$' + cantidad* valor + '</td> <td><button type="button" class="btn btn-link" id="BotonEliminar" onclick="eliminarProducto(' + productoid + ',\'' + producto + '\',this)" >Eliminar</button> </td></tr>';
+            var markup = '<tr><td id="nombreproducto">' + producto + '</td> <td>' + valor + '</td> <td>' + cantidad + '</td> <td>' + '$' + cantidad*valor + '</td> <td><button type="button" class="btn btn-link" id="BotonEliminar" onclick="eliminarProducto(' + productoid + ',\'' + producto + '\',this)" >Eliminar</button> </td></tr>';
             $("#tablaProductos tbody").append(markup);
             $("#SelectProducto option:selected").remove();
             enviarSolicitudProducto(productoid, producto, valor, cantidad, 1);
@@ -215,6 +226,27 @@
                 }
             );
         }
-
+        $('#SelectProducto').click(function (e) {
+            const id = $('#SelectProducto option:selected').val();
+            if (id != null) {
+                $.ajax({
+                    url: '@Url.Action("getLimitesByProductoId", "Productos")',
+                    type: "GET",
+                    async: true,
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    data: { id: id },
+                    success: function (response) {
+                        //$('#btn_tooltip').attr('title', 'El mínimo aceptado es: ' + response.ValorMinimo + '\nEl valor Máximo aceptado es: ' + response.ValorMaximo);
+                        $('#toolTipMaximo').attr('title', 'El máximo es: $' + response.ValorMaximo);
+                        $('#toolTipMinimo').attr('title', 'El mínimo es: $' + response.ValorMinimo);
+                    },
+                    error: function (response) {
+                        console.log(response);
+                       // $('#ValorUnitarioProducto');
+                    }
+                });
+            }
+        });
     </script>
 }

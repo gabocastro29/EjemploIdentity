@@ -98,10 +98,12 @@ namespace EjemploIdentity.Controllers
         public JsonResult AgregarProducto(GestionProductoPedidoViewModel orden)
         {
             List<GestionProductoPedidoViewModel> productos = AppViewModel.PedidosEnProceso[orden.Token];
-            if (productos!=null || productos.Count>0) {
+            if (ModelState.IsValid)
+            {
                 productos.Add(orden);
+                return Json("Ok");
             }
-            return Json("Ok");
+            return Json("Not Ok");
         }
 
         // GET: Pedidos/Create
@@ -226,6 +228,7 @@ namespace EjemploIdentity.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+
 
         protected override void Dispose(bool disposing)
         {

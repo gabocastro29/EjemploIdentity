@@ -114,6 +114,11 @@ namespace EjemploIdentity.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+        public JsonResult getLimitesByProductoId(int? id)
+        {
+            var producto = db.ProductoValores.Where(x => x.ProductoId == id).First();
+            return Json(producto, JsonRequestBehavior.AllowGet);
+        }
 
         protected override void Dispose(bool disposing)
         {
