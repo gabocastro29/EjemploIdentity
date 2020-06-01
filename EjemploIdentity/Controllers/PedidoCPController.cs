@@ -129,7 +129,7 @@ namespace EjemploIdentity.Controllers
             List<GestionProductoPedidoViewModel> productos = AppViewModel.PedidosEnProceso[orden.Token];
             if (productos != null)
             {
-                foreach (GestionProductoPedidoViewModel item in productos)
+                foreach (var item in productos)
                 {
                     PedidoProducto objeto = new PedidoProducto();
                     objeto.Pedido = orden.Pedido;
@@ -140,11 +140,13 @@ namespace EjemploIdentity.Controllers
                     objeto.Cantidad = item.Cantidad;
 
                     ValidationContext vc = new ValidationContext(objeto);
-                    ICollection<ValidationResult> results = new List<ValidationResult>(); 
-                    bool isValid = Validator.TryValidateObject(objeto, vc, results, true); 
+                    bool isValid = Validator.TryValidateObject(objeto, vc, resultado, true); 
+
 
                     if (!isValid) {
-                        //ModelState.AddModelError("", "");
+                        var precios = db.ProductoValores.Where(x => x.ProductoId == objeto.ProductoId).First();
+                        string validacion = string.Format("El precio de {0} debe estar entre {1} y {2}", objeto.Producto.Descripcion, precios.ValorMinimo, precios.ValorMaximo);
+                        ModelState.AddModelError("", validacion);
                     }
                     orden.Pedido.ProductosPedido.Add(objeto);
                 }
@@ -157,14 +159,17 @@ namespace EjemploIdentity.Controllers
                 }
                 orden.Pedido.EstadoPedido = EstadoPedido.Creado;
                 db.Pedidos.Add(orden.Pedido);
-                db.PedidoProductos.AddRange(orden.Pedido.ProductosPedido);
+                foreach (var i in orden.Pedido.ProductosPedido)
+                {
+                    db.PedidoProductos.Add(i);
+                }
                 db.SaveChanges();
 
                 return RedirectToAction("Index");
             }
-            else {
-                orden.SetearBases(db);
-            }
+            
+            orden.SetearBases(db);
+            
             return View(orden);
         }
 
